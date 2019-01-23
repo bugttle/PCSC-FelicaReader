@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PCSC_FelicaReader.ViewModels;
+using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace PCSC_FelicaReader
 {
@@ -20,9 +9,58 @@ namespace PCSC_FelicaReader
     /// </summary>
     public partial class MainWindow : Window
     {
+        SmartCard.DeviceManager deviceManager = new SmartCard.DeviceManager();
+
         public MainWindow()
         {
             InitializeComponent();
+
+            var device = new DeviceModel();
+            DataContext = device;
+
+            deviceManager.OnStatusChange = (isRunning) =>
+            {
+                device.IsRunning.Value = isRunning;
+            };
+            deviceManager.OnError = (error) =>
+            {
+                device.Message.Value = error.ToString();
+            };
+            deviceManager.OnCardPresented = (reader, card) =>
+            {
+                try
+                {
+                    device.Reader.SerialNumber.Value = reader.ReadSerialNumber();
+                    device.Card.IDm.Value = card.GetIDm();
+                }
+                catch (Exception e)
+                {
+                    device.Message.Value = e.ToString();
+                }
+            };
+        }
+
+        private void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            deviceManager.Start();
+        }
+
+        private void StopButton_Click(object sender, RoutedEventArgs e)
+        {
+            var device = DataContext as DeviceModel;
+            device.Reader.SerialNumber.Value = "";
+            device.Card.IDm.Value = "";
+
+            deviceManager.Stop();
+        }
+
+        private void RestartButton_Click(object sender, RoutedEventArgs e)
+        {
+            var device = DataContext as DeviceModel;
+            device.Reader.SerialNumber.Value = "";
+            device.Card.IDm.Value = "";
+
+            deviceManager.Restart();
         }
     }
 }

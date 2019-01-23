@@ -4,9 +4,47 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PCSC_FelicaReader"
+        xmlns:converter="clr-namespace:PCSC_FelicaReader.ViewModels.Converters"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="RCSC Felica Reader" Height="300" Width="480">
+    <Window.Resources>
+        <converter:RunningStatusConverter x:Key="RunningStatusConverter"/>
+    </Window.Resources>
     <Grid>
-        
+        <GroupBox Header="Reader" Margin="10,10,10.660,0" Height="70" VerticalAlignment="Top">
+            <Grid Margin="10,0" VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.3*"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Serial Number" HorizontalAlignment="Right"/>
+                <TextBox Height="23" TextWrapping="Wrap" Text="{Binding Reader.SerialNumber.Value, Mode=OneWay}" VerticalAlignment="Center" Grid.Column="1" Margin="10,0"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Card" Margin="10,83,10.333,0" Height="70" VerticalAlignment="Top">
+            <Grid Margin="10,0" VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.3*"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Label Content="IDm" HorizontalAlignment="Right"/>
+                <TextBox Height="23" TextWrapping="Wrap" Text="{Binding Card.IDm.Value, Mode=OneWay}" VerticalAlignment="Center" Grid.Column="1" Margin="10,0"/>
+            </Grid>
+        </GroupBox>
+        <StackPanel Height="60" Margin="10,172,10.333,0" VerticalAlignment="Top">
+            <Label Content="{Binding IsRunning.Value, Converter={StaticResource RunningStatusConverter}}" Height="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <StackPanel Margin="10,0" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Start" HorizontalAlignment="Center" Margin="20,0" VerticalAlignment="Center" Width="75"  Click="StartButton_Click"/>
+                <Button Content="Stop" HorizontalAlignment="Center" Margin="20,0" VerticalAlignment="Center" Width="75" Click="StopButton_Click"/>
+                <Button Content="Restart" HorizontalAlignment="Center" Margin="20,0" VerticalAlignment="Center" Width="75" Click="RestartButton_Click"/>
+            </StackPanel>
+            <Label Content="{Binding Message.Value}" Height="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </StackPanel>
     </Grid>
 </Window>
